@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    .fc .fc-daygrid-day-number {
+      color: #000000;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .fc .fc-daygrid-day-number:hover {
+      color: #1e3a8a;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Dashboard - DateFY</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <!-- FullCalendar CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.css" rel="stylesheet">
+
+  <style>
+    /* Caixa de eventos do dia */
+    #eventos-dia {
+      margin-top: 15px;
+      padding: 10px;
+      background-color: #f5f5dc; /* bege claro */
+      border: 1px solid #ccc;
+      border-radius: 6px;
+    }
+    #eventos-dia h4 {
+      margin: 0 0 8px;
+      color: #1e3a8a; /* azul escuro */
+    }
+    #eventos-dia ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    #eventos-dia li {
+      background: #1e90ff; /* azul médio */
+      color: #fff;
+      padding: 5px 8px;
+      margin-bottom: 5px;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+  <aside class="sidebar">
+    <h2 class="logo">Date<span>FY</span></h2>
+    <ul>
+      <li><a href="{{ url_for('dashboard') }}" class="active"> Visão Geral</a></li>
+      <li><a href="{{ url_for('vida_pessoal') }}"> Vida Pessoal</a></li>
+      <li><a href="{{ url_for('financas') }}"> Finanças</a></li>
+      <li><a href="{{ url_for('perfil') }}"> Perfil</a></li>
+      <li><a href="{{ url_for('logout') }}"> Sair</a></li>
+    </ul>
+  </aside>
+
+  <main>
+    <h1 class="titulo-pagina">Olá, {{ nome }} </h1>
+    <p class="descricao-texto">Aqui está um resumo rápido da sua vida e finanças.</p>
+
+    <section class="cards-dashboard">
+      <div class="card-box">
+        <h3>Tarefas Hoje</h3>
+        <p id="dash-tarefas">0</p>
+      </div>
+      <div class="card-box entrada">
+        <h3>Entradas</h3>
+        <p id="dash-entradas">R$ 0,00</p>
+      </div>
+      <div class="card-box saida">
+        <h3>Saídas</h3>
+        <p id="dash-saidas">R$ 0,00</p>
+      </div>
+      <div class="card-box total">
+        <h3>Total</h3>
+        <p id="dash-total">R$ 0,00</p>
+      </div>
+    </section>
+
+    <section class="painel-info" style="margin-top:18px;">
+      <h3>Resumo por Categoria</h3>
+      <canvas id="dash-chart" height="120"></canvas>
+    </section>
+
+    <!-- NOVA SEÇÃO DE CALENDÁRIO -->
+    <section class="painel-info" style="margin-top:18px;">
+      <h3>Calendário</h3>
+      <div id="calendar"></div>
+      <!-- Caixa para mostrar eventos do dia -->
+      <div id="eventos-dia" style="display:none;">
+        <h4>Eventos do Dia</h4>
+        <ul id="lista-eventos"></ul>
+      </div>
+    </section>
+  </main>
+
+  <!-- FullCalendar JS -->
+  <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
+
+  <script>
+  document.addEventListener('DOMContentLoaded', function() {
+    atualizarDash();
+
+    var calendarEl = document.getElementById('calendar');
+    var calendar = new FullCalendar.Calendar(calendarEl, {
+      initialView: 'dayGridMonth',
+      locale: 'pt-br',
+      height: 'auto',
+      events: [
+        { title: 'Reunião', start: '2025-11-22' },
+        { title: 'Pagamento', start: '2025-11-25' },
+        { title: 'Aniversário', start: '2025-11-28' }
+      ],
+
+      // 👉 Captura clique na data
+      dateClick: function(info) {
+        var eventosDoDia = calendar.getEvents().filter(function(ev) {
+          return ev.startStr === info.dateStr;
+        });
+
+        var listaEl = document.getElementById("lista-eventos");
+        listaEl.innerHTML = ""; // limpa lista
+
+        if (eventosDoDia.length > 0) {
+          eventosDoDia.forEach(function(ev) {
+            var li = document.createElement("li");
+            li.textContent = ev.title;
+            listaEl.appendChild(li);
+          });
+          document.getElementById("eventos-dia").style.display = "block";
+        } else {
+          var li = document.createElement("li");
+          li.textContent = "Nenhum evento neste dia.";
+          listaEl.appendChild(li);
+          document.getElementById("eventos-dia").style.display = "block";
+        }
+      }
+    });
+
+    calendar.render();
+  });
+
+    async function atualizarDash() {
+      const res = await fetch("{{ url_for('financas_data') }}");
+      const data = await res.json();
+      const total = (data.totais.entrada || 0) - (data.totais.saida || 0);
+      document.getElementById("dash-entradas").innerText = "R$ " + (data.totais.entrada || 0).toFixed(2);
+      document.getElementById("dash-saidas").innerText = "R$ " + (data.totais.saida || 0).toFixed(2);
+      document.getElementById("dash-total").innerText = "R$ " + total.toFixed(2);
+
+      document.getElementById("dash-tarefas").innerText = "Verifique Vida Pessoal";
+
+      const ctx = document.getElementById("dash-chart").getContext('2d');
+      if(window._dashChart) window._dashChart.destroy();
+      window._dashChart = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: data.por_categoria.labels,
+          datasets: [{ data: data.por_categoria.values, backgroundColor: data.por_categoria.colors }]
+        },
+        options: { plugins: { legend: { position: 'bottom' } } }
+      });
+    }
+  </script>

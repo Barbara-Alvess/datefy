@@ -1,0 +1,42 @@
+ <!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Criar Conta - DateFY</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body class="center-page">
+  <div class="container">
+    <h1 class="logo">Date<span>FY</span></h1>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div style="text-align:left;margin-bottom:12px;">
+        {% for cat, msg in messages %}
+          <div style="background:rgba(255,255,255,0.06);padding:8px;border-radius:8px;margin-bottom:6px;">{{ msg }}</div>
+        {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" action="{{ url_for('criar_conta') }}">
+      <label for="full-name">Nome completo</label>
+      <input id="full-name" name="full-name" type="text" placeholder="Seu nome" required>
+
+      <label for="email">E-mail</label>
+      <input id="email" name="email" type="email" placeholder="seu@exemplo.com" required>
+
+      <label for="password">Senha</label>
+      <input id="password" name="password" type="password" placeholder="Crie uma senha" required>
+
+      <label for="confirm-password">Confirmar Senha</label>
+      <input id="confirm-password" name="confirm-password" type="password" placeholder="Repita a senha" required>
+
+      <button type="submit">Cadastrar</button>
+    </form>
+
+    <div class="footer">Já tem conta? <a href="{{ url_for('login') }}">Entrar</a></div>
+  </div>
+</body>
+</html>
