@@ -256,3 +256,25 @@ body.tela-interna { display:flex; min-height:100vh; }
   color: #1e3a8a; /* azul escuro */
   text-decoration: underline; /* opcional: sublinha o número */
 }}
+.tabela-financas {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 16px;
+  border: 1px solid #000; /* borda preta */
+}
+
+.tabela-financas th, .tabela-financas td {
+  border: 1px solid #000; /* linhas pretas */
+  padding: 10px;
+  text-align: center;
+  color: #000; /* texto preto */
+  background-color: #fff; /* fundo branco */
+  font-weight: 600;
+}
+
+.tabela-financas th {
+  background-color: #fff; /* cabeçalho também branco */
+  color: #000; /* texto preto */
+  font-weight: bold;
+}
+

@@ -65,11 +65,11 @@
 
   <main>
     <h1 class="titulo-pagina">Olá, {{ nome }} </h1>
-    <p class="descricao-texto">Aqui está um resumo rápido da sua vida e finanças.</p>
+    <p class="descricao-texto">Aqui está seu dashboard atualizado.</p>
 
     <section class="cards-dashboard">
       <div class="card-box">
-        <h3>Tarefas Hoje</h3>
+        <h3>Tarefas do dia</h3>
         <p id="dash-tarefas">0</p>
       </div>
       <div class="card-box entrada">
@@ -85,12 +85,6 @@
         <p id="dash-total">R$ 0,00</p>
       </div>
     </section>
-
-    <section class="painel-info" style="margin-top:18px;">
-      <h3>Resumo por Categoria</h3>
-      <canvas id="dash-chart" height="120"></canvas>
-    </section>
-
     <!-- NOVA SEÇÃO DE CALENDÁRIO -->
     <section class="painel-info" style="margin-top:18px;">
       <h3>Calendário</h3>
@@ -101,7 +95,49 @@
         <ul id="lista-eventos"></ul>
       </div>
     </section>
-  </main>
+
+    <!-- NOVA SEÇÃO DE RESUMO FINANCEIRO -->
+     <section class="painel-info" style="margin-top:18px;">
+  <h3>Resumo Financeiro</h3>
+  <table class="tabela-financas">
+    <thead>
+      <tr>
+        <th>Origem</th>
+        <th>Entradas (R$)</th>
+        <th>Saídas (R$)</th>
+        <th>Total (R$)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Salário</td>
+        <td>5000,00</td>
+        <td>0,00</td>
+        <td>5000,00</td>
+      </tr>
+      <tr>
+        <td>Investimentos</td>
+        <td>800,00</td>
+        <td>200,00</td>
+        <td>600,00</td>
+      </tr>
+      <tr>
+        <td>Despesas Fixas</td>
+        <td>0,00</td>
+        <td>2500,00</td>
+        <td>-2500,00</td>
+      </tr>
+      <tr>
+        <td><strong>Total Geral</strong></td>
+        <td><strong>5800,00</strong></td>
+        <td><strong>2700,00</strong></td>
+        <td><strong>3100,00</strong></td>
+      </tr>
+    </tbody>
+  </table>
+     </section>
+
+    </main>
 
   <!-- FullCalendar JS -->
   <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js"></script>
